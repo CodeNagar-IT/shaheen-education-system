@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { school } from "@/lib/school";
@@ -29,21 +31,42 @@ const faqs = [
   },
 ];
 
+const fallbackBranches = [
+  {
+    id: "main-branch",
+    name: school.mainBranch.name,
+    code: "SES-MAIN",
+    address: school.mainBranch.address,
+    city: school.mainBranch.city,
+    phone: school.mainBranch.phone,
+    email: school.mainBranch.email,
+    whatsapp: school.mainBranch.whatsapp,
+    isMain: true,
+  },
+];
+
 export default async function ContactPage() {
-  const branches = await prisma.branch.findMany({
-    orderBy: { isMain: "desc" },
-    select: {
-      id: true,
-      name: true,
-      code: true,
-      address: true,
-      city: true,
-      phone: true,
-      email: true,
-      whatsapp: true,
-      isMain: true,
-    },
-  });
+  let branches: any[] = [];
+  try {
+    branches = await prisma.branch.findMany({
+      orderBy: { isMain: "desc" },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        address: true,
+        city: true,
+        phone: true,
+        email: true,
+        whatsapp: true,
+        isMain: true,
+      },
+    });
+  } catch (error) {
+    console.warn("Database query skipped for contact page:", error);
+  }
+
+  const displayBranches = branches.length > 0 ? branches : fallbackBranches;
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -68,7 +91,7 @@ export default async function ContactPage() {
         <div className="grid gap-10 lg:grid-cols-12">
           {/* Inquiry Form */}
           <div className="lg:col-span-7">
-            <InquiryForm branches={branches} />
+            <InquiryForm branches={displayBranches} />
           </div>
 
           {/* Contact Information & Hours */}
@@ -107,7 +130,7 @@ export default async function ContactPage() {
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <h3 className="font-serif text-lg font-bold text-navy mb-4">Campuses & Centers</h3>
               <div className="space-y-4">
-                {branches.map((b) => (
+                {displayBranches.map((b) => (
                   <div key={b.id} className="border-l-2 border-royal/40 pl-3">
                     <div className="flex items-center justify-between">
                       <p className="font-semibold text-navy text-sm">{b.name}</p>

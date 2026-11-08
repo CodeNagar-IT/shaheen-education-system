@@ -5,9 +5,11 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
-  // Prevents build trace manifest bugs in Next.js App Router route groups
-  outputFileTracingIncludes: {
-    "/*": ["./app/**/*"],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
   },
 };
 

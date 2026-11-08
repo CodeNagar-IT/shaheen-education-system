@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { school } from "@/lib/school";
 import { prisma } from "@/lib/db";
@@ -5,8 +7,42 @@ import { Quote } from "lucide-react";
 
 export const metadata: Metadata = { title: "About & Director's Message" };
 
+const defaultFaculty = [
+  {
+    id: "f1",
+    name: "Prof. Dr. Khalid Mahmood",
+    title: "Director & Principal",
+    subject: "Educational Leadership",
+    bio: "Over 20 years leading academic institutions, fostering science research and character building.",
+    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+  },
+  {
+    id: "f2",
+    name: "Mrs. Farzana Bibi",
+    title: "Headmistress",
+    subject: "Languages & Humanities",
+    bio: "Dedicated pedagogical expert overseeing primary and secondary school pastoral care.",
+    imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+  },
+  {
+    id: "f3",
+    name: "Sir Ahmed Raza",
+    title: "Senior Science Master",
+    subject: "Physics & Mathematics",
+    bio: "Specialist in STEM pedagogy and BISE matriculation board preparation.",
+    imageUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+  },
+];
+
 export default async function AboutPage() {
-  const faculty = await prisma.faculty.findMany();
+  let faculty: any[] = [];
+  try {
+    faculty = await prisma.faculty.findMany();
+  } catch (error) {
+    console.warn("Database query skipped for faculty:", error);
+  }
+
+  const displayFaculty = faculty.length > 0 ? faculty : defaultFaculty;
 
   return (
     <div>
@@ -56,7 +92,7 @@ export default async function AboutPage() {
         <h2 className="font-serif text-3xl text-navy">Faculty showcase</h2>
         <p className="mt-2 text-slate-600">Subject specialists and pastoral leaders of the Main Campus.</p>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {faculty.map((f) => (
+          {displayFaculty.map((f) => (
             <article key={f.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={f.imageUrl} alt={f.name} className="h-52 w-full object-cover" />

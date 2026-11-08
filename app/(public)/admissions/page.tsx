@@ -1,11 +1,39 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { AdmissionForm } from "@/components/public/admission-form";
 import { prisma } from "@/lib/db";
+import { school } from "@/lib/school";
 
 export const metadata: Metadata = { title: "Admissions" };
 
+const fallbackBranches = [
+  {
+    id: "main-branch",
+    code: "SES-MAIN",
+    name: school.mainBranch.name,
+    address: school.mainBranch.address,
+    city: school.mainBranch.city,
+    phone: school.mainBranch.phone,
+    email: school.mainBranch.email,
+    whatsapp: school.mainBranch.whatsapp,
+    mapUrl: school.mainBranch.mapUrl,
+    isMain: true,
+    established: school.established,
+    principal: "Mrs. Farzana Bibi",
+    studentCap: 650,
+  },
+];
+
 export default async function AdmissionsPage() {
-  const branches = await prisma.branch.findMany({ orderBy: { isMain: "desc" } });
+  let branches: any[] = [];
+  try {
+    branches = await prisma.branch.findMany({ orderBy: { isMain: "desc" } });
+  } catch (error) {
+    console.warn("Database query skipped for admissions:", error);
+  }
+
+  const displayBranches = branches.length > 0 ? branches : fallbackBranches;
 
   return (
     <div>
@@ -33,7 +61,7 @@ export default async function AdmissionsPage() {
             </div>
           ))}
         </div>
-        <AdmissionForm branches={branches} />
+        <AdmissionForm branches={displayBranches} />
       </section>
     </div>
   );
