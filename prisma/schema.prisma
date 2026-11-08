@@ -1,0 +1,222 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Branch {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  address       String
+  city          String
+  phone         String
+  email         String
+  whatsapp      String
+  mapUrl        String
+  isMain        Boolean  @default(false)
+  established   String
+  principal     String
+  studentCap    Int      @default(400)
+  createdAt     DateTime @default(now())
+  users         User[]
+  students      Student[]
+  notices       Notice[]
+  applications  AdmissionApplication[]
+  inquiries     Inquiry[]
+  classes       SchoolClass[]
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  password      String
+  role          String
+  image         String?
+  branchId      String?
+  branch        Branch?  @relation(fields: [branchId], references: [id])
+  studentId     String?
+  student       Student? @relation(fields: [studentId], references: [id])
+  createdAt     DateTime @default(now())
+  markedAttendance Attendance[]
+}
+
+model Student {
+  id             String   @id @default(cuid())
+  rollNumber     String
+  admissionNo    String   @unique
+  firstName      String
+  lastName       String
+  gender         String
+  dateOfBirth    DateTime
+  className      String
+  section        String
+  bloodGroup     String?
+  photoUrl       String?
+  status         String   @default("ACTIVE")
+  guardianName   String
+  guardianPhone  String
+  guardianEmail  String?
+  relation       String   @default("Father")
+  address        String
+  branchId       String
+  branch         Branch   @relation(fields: [branchId], references: [id])
+  createdAt      DateTime @default(now())
+  users          User[]
+  fees           FeeInvoice[]
+  attendance     Attendance[]
+  results        Result[]
+  @@unique([branchId, rollNumber])
+}
+
+model SchoolClass {
+  id        String @id @default(cuid())
+  name      String
+  section   String
+  teacher   String
+  room      String
+  branchId  String
+  branch    Branch @relation(fields: [branchId], references: [id])
+}
+
+model FeeInvoice {
+  id          String    @id @default(cuid())
+  challanNo   String    @unique
+  receiptNo   String?
+  studentId   String
+  student     Student   @relation(fields: [studentId], references: [id])
+  month       String
+  academicYear String
+  tuition     Int
+  lab         Int       @default(0)
+  exam        Int       @default(0)
+  other       Int       @default(0)
+  amount      Int
+  dueDate     DateTime
+  status      String
+  paidAt      DateTime?
+  method      String?
+  createdAt   DateTime  @default(now())
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  date        DateTime
+  status      String
+  remarks     String?
+  markedById  String?
+  markedBy    User?    @relation(fields: [markedById], references: [id])
+  @@unique([studentId, date])
+}
+
+model Exam {
+  id            String   @id @default(cuid())
+  name          String
+  term          String
+  academicYear  String
+  results       Result[]
+}
+
+model Result {
+  id          String  @id @default(cuid())
+  studentId   String
+  student     Student @relation(fields: [studentId], references: [id])
+  examId      String
+  exam        Exam    @relation(fields: [examId], references: [id])
+  subject     String
+  marks       Float
+  maxMarks    Float
+  grade       String
+  remarks     String?
+  @@unique([studentId, examId, subject])
+}
+
+model AdmissionApplication {
+  id            String   @id @default(cuid())
+  trackingCode  String   @unique
+  applicantName String
+  fatherName    String
+  motherName    String?
+  gender        String
+  dateOfBirth   DateTime
+  classApplied  String
+  previousSchool String?
+  phone         String
+  email         String?
+  address       String
+  cnic          String?
+  documentName  String?
+  documentUrl   String?
+  status        String   @default("SUBMITTED")
+  notes         String?
+  branchId      String
+  branch        Branch   @relation(fields: [branchId], references: [id])
+  createdAt     DateTime @default(now())
+}
+
+model Inquiry {
+  id         String   @id @default(cuid())
+  name       String
+  phone      String
+  email      String?
+  childAge   String?
+  classInterest String?
+  message    String
+  status     String   @default("NEW")
+  branchId   String
+  branch     Branch   @relation(fields: [branchId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Notice {
+  id          String   @id @default(cuid())
+  title       String
+  body        String
+  category    String
+  publishedAt DateTime @default(now())
+  branchId    String?
+  branch      Branch?  @relation(fields: [branchId], references: [id])
+}
+
+model GalleryItem {
+  id         String   @id @default(cuid())
+  title      String
+  caption    String
+  imageUrl   String
+  category   String
+  createdAt  DateTime @default(now())
+}
+
+model AcademicResource {
+  id           String @id @default(cuid())
+  title        String
+  type         String
+  className    String?
+  academicYear String
+  fileUrl      String
+  description  String
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  title       String
+  excerpt     String
+  body        String
+  publishedAt DateTime @default(now())
+}
+
+model Faculty {
+  id        String @id @default(cuid())
+  name      String
+  title     String
+  subject   String
+  campus    String
+  bio       String
+  imageUrl  String
+}
