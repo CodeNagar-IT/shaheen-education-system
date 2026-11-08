@@ -107,24 +107,30 @@ export default async function StudentDetailPage({
             </h2>
 
             {/* Simulated Smart ID Card */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-navy via-navy to-royal p-6 text-white shadow-xl border border-gold/30">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 p-6 text-white shadow-2xl border-2 border-cyan-500/30">
               {/* Watermark Emblem */}
               <div className="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
-                <Emblem className="h-48 w-48 text-white" />
+                <Emblem className="h-52 w-52" />
               </div>
 
               {/* ID Header */}
-              <div className="flex items-center justify-between border-b border-white/15 pb-4">
-                <div className="flex items-center gap-2.5">
-                  <Emblem className="h-9 w-9 text-gold" />
+              <div className="flex items-center justify-between border-b border-cyan-500/20 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 p-0.5 rounded-full bg-slate-950 border border-cyan-500/40">
+                    <Emblem className="h-full w-full" />
+                  </div>
                   <div>
                     <p className="font-serif text-xs font-bold tracking-tight text-white uppercase">
                       Shaheen Education System
                     </p>
-                    <p className="text-[10px] text-gold font-medium">Student Identity Card</p>
+                    <p className="text-[10px] text-cyan-400 font-mono font-semibold tracking-wider uppercase">
+                      Muzaffarabad • Smart Student ID
+                    </p>
                   </div>
                 </div>
-                <ShieldCheck className="h-5 w-5 text-gold" />
+                <span className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                  <ShieldCheck className="h-4 w-4" />
+                </span>
               </div>
 
               {/* Card Body */}

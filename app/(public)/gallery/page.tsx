@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { Camera, Image as ImageIcon, Sparkles } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Campus Gallery — Shaheen Education System",
   description: "Explore our state-of-the-art facilities, campus events, sports days, and student achievements.",
